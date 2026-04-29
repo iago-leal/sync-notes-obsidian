@@ -20,16 +20,20 @@ from __future__ import annotations
 
 import re
 import unicodedata
+from functools import lru_cache
 from typing import Final
 
 from rapidfuzz import fuzz
 
 from synctotes.types import Candidate, MatchResult
 
+# Provisional thresholds. Empirical recalibration tracked in issue #5
+# (≥85% rigorous match-rate target for Quincas Borba fixture).
 DEFAULT_MIN_SCORE: Final[float] = 80.0
 DEFAULT_AMBIGUITY_MARGIN: Final[float] = 5.0
 _TOP_K_CANDIDATES: Final[int] = 3
 _EXCERPT_LENGTH: Final[int] = 120
+_NORMALIZE_CACHE_SIZE: Final[int] = 512
 
 # Typographical normalization map: codepoints that vary between Kindle/Amazon
 # exports and PDF text-extraction, but are semantically equivalent.
@@ -108,14 +112,19 @@ def _score_pages(normalized_snippet: str, pd_pages: dict[int, str]) -> list[Cand
             Candidate(
                 page=page,
                 score=float(score),
-                excerpt=_excerpt(raw_text),
+                excerpt=_excerpt(normalized),
             )
         )
     return out
 
 
+@lru_cache(maxsize=_NORMALIZE_CACHE_SIZE)
 def _normalize(text: str) -> str:
-    """NFKC + smart-quote/dash unification + whitespace collapse."""
+    """NFKC + smart-quote/dash unification + whitespace collapse.
+
+    Cached because the same page text is re-normalized once per highlight
+    when a caller resolves many snippets against the same `pd_pages` dict.
+    """
     if not text:
         return ""
     normalized = unicodedata.normalize("NFKC", text)
@@ -125,9 +134,8 @@ def _normalize(text: str) -> str:
     return normalized
 
 
-def _excerpt(page_text: str, length: int = _EXCERPT_LENGTH) -> str:
-    """Short prefix of the page text for diagnostic display in candidates."""
-    cleaned = re.sub(r"\s+", " ", page_text).strip()
-    if len(cleaned) <= length:
-        return cleaned
-    return cleaned[:length].rstrip() + "…"
+def _excerpt(normalized_text: str, length: int = _EXCERPT_LENGTH) -> str:
+    """Short prefix of an already-normalized page for diagnostic display."""
+    if len(normalized_text) <= length:
+        return normalized_text
+    return normalized_text[:length].rstrip() + "…"

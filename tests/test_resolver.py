@@ -13,6 +13,7 @@ from pathlib import Path
 import pytest
 
 from synctotes.amazon_export import parse_export_pdf
+from synctotes.kindle import ClippingType
 from synctotes.pdf import extract_pages
 from synctotes.resolver import resolve_to_pd_page
 
@@ -68,6 +69,31 @@ def test_resolve_returns_no_match_for_empty_pages() -> None:
     assert result.status == "no_match"
 
 
+def test_resolve_against_synthetic_pages_finds_unique_match() -> None:
+    """Pure unit test: no fixture PDFs, controlled inputs."""
+    pages = {
+        1: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+        2: "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+        3: "Ut enim ad minim veniam, quis nostrud exercitation.",
+    }
+    result = resolve_to_pd_page("tempor incididunt ut labore", pages)
+    assert result.status == "found"
+    assert result.page == 2
+    assert result.confidence is not None and result.confidence >= 95.0
+
+
+def test_resolve_against_synthetic_pages_flags_ambiguous_repeated_phrase() -> None:
+    """Same exact phrase on two pages → ambiguous (top-1 and top-2 tie)."""
+    pages = {
+        1: "Repeating sentence used as a probe across pages.",
+        2: "Repeating sentence used as a probe across pages.",
+        3: "Distinct content unrelated to the probe.",
+    }
+    result = resolve_to_pd_page("Repeating sentence used as a probe", pages)
+    assert result.status == "ambiguous"
+    assert len(result.candidates) >= 2
+
+
 def test_resolve_normalizes_smart_quotes(
     quincas_borba_pd_pages: dict[int, str],
 ) -> None:
@@ -113,7 +139,7 @@ def test_quincas_borba_overall_match_rate_above_threshold(
     highlights = [
         a
         for a in notebook.annotations
-        if a.kind.value == "highlight" and not a.is_continuation and a.text
+        if a.kind == ClippingType.HIGHLIGHT and not a.is_continuation and a.text
     ]
     found = 0
     for ann in highlights:
