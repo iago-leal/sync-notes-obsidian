@@ -1,0 +1,74 @@
+[project]
+name = "synctotes"
+version = "0.0.1"
+description = "Pipeline determinístico para sincronizar anotações de livros (Kindle, Boox, KOReader) ao vault Obsidian via callouts com link âncora ao PDF canônico."
+readme = "README.md"
+requires-python = ">=3.12"
+license = "MIT"
+authors = [
+    { name = "Iago Leal", email = "iagobernardes13@gmail.com" },
+]
+keywords = ["obsidian", "kindle", "annotations", "pdf", "highlights", "knowledge-management"]
+classifiers = [
+    "Development Status :: 1 - Planning",
+    "Programming Language :: Python :: 3.12",
+    "Operating System :: MacOS :: MacOS X",
+]
+dependencies = [
+    "pdfplumber>=0.11",
+    "rapidfuzz>=3.6",
+    "ebooklib>=0.18",
+]
+
+[project.scripts]
+synctotes = "synctotes.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/iago-leal/sync-notes-obsidian"
+Issues = "https://github.com/iago-leal/sync-notes-obsidian/issues"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/synctotes"]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.5",
+    "mypy>=1.10",
+    "pip-audit>=2.7",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = [
+    "E",
+    "W",
+    "F",
+    "I",
+    "B",
+    "C4",
+    "UP",
+    "SIM",
+    "RUF",
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+files = ["src", "tests"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
