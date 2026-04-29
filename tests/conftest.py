@@ -67,3 +67,18 @@ def sample_clippings_pt_br() -> str:
 def sample_clippings_en() -> str:
     """Synthetic My Clippings.txt content in English."""
     return SAMPLE_CLIPPINGS_EN
+
+
+_FIXTURES_ROOT = Path(__file__).parent / "fixtures"
+
+
+@pytest.fixture
+def quincas_borba_pd_pdf() -> Path:
+    """Public-domain PDF of Quincas Borba (Biblioteca Nacional do Brasil)."""
+    return _FIXTURES_ROOT / "machado-quincas-borba" / "pd.pdf"
+
+
+@pytest.fixture
+def quincas_borba_amazon_export_pdf() -> Path:
+    """Amazon 'Caderno de anotações' export PDF for Quincas Borba (ASIN B09JWVC7X8)."""
+    return _FIXTURES_ROOT / "machado-quincas-borba" / "amazon_export.pdf"
