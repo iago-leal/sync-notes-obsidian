@@ -6,6 +6,8 @@ Real coverage lands in F6.a as each module is implemented.
 
 from __future__ import annotations
 
+from typing import get_args
+
 import synctotes
 from synctotes import types
 
@@ -18,9 +20,8 @@ def test_match_result_contract_is_exposed() -> None:
     """The MatchResult type contract is the public resolver interface (guardrail #1)."""
     assert types.MatchResult is not None
     assert types.Candidate is not None
-    assert "found" in types.MatchStatus.__args__
-    assert "ambiguous" in types.MatchStatus.__args__
-    assert "no_match" in types.MatchStatus.__args__
+    statuses = set(get_args(types.MatchStatus))
+    assert {"found", "ambiguous", "no_match"} <= statuses
 
 
 def test_match_result_default_construction() -> None:
