@@ -1,0 +1,23 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.Spotlight-V100
+.Trashes
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+
+# Stack-specific (preencher quando F5 fechar — após project-init/project-setup)
+# Python: __pycache__/, .venv/, *.egg-info/
+# Node: node_modules/, dist/, build/
+# Lock files: NUNCA ignorar (regra canônica do project-init)
