@@ -1,6 +1,6 @@
 # Architecture — sync-notes-obsidian
 
-- **Atualizado:** 2026-04-29
+- **Atualizado:** 2026-05-03
 - **Repositório:** https://github.com/iago-leal/sync-notes-obsidian
 - **Pasta local:** `~/Desktop/jailbreak-kindle/` (nome preservado como evidência narrativa do reenquadramento MDCU — ver README e transcrição)
 
@@ -15,7 +15,7 @@
 
 - **Linguagem:** Python 3.12+
 - **Runtime:** CPython 3.12 (alvo macOS Apple Silicon; CLI portável a Linux)
-- **Framework:** nenhum — CLI pura
+- **Framework:** Typer (CLI baseada em tipagem estrita)
 - **Banco de dados:** nenhum — estado em arquivos (Markdown no vault + arquivos de log)
 - **Infra:** macOS local + Syncthing (biblioteca de PDFs/EPUBs) + Obsidian Sync (vault) + Send-to-Kindle (transporte para Kindle Colorsoft)
 
@@ -35,9 +35,12 @@
 | `pdfplumber` | Extração de texto + coordenadas de PDFs | Mais maduro do ecossistema Python para extrair texto preservando layout; expõe coords para futuras extensões |
 | `rapidfuzz` | Fuzzy text matching | Implementação rápida (Cython) de Levenshtein/ratio; usado no conversor `loc→page` |
 | `ebooklib` | Parsing de EPUB | Necessário para mapping inverso location→texto quando My Clippings traz só location, sem snippet |
-| `pytest` | Testes | Padrão da comunidade Python |
+| `typer` | Framework CLI | Gera a CLI inteira a partir dos Type Hints nativos do `mypy`, eliminando boilerplate do `argparse`. |
+| `rich` | Terminal & Logging | Logs estruturados e legíveis no terminal em caso de erros no parse do Kindle. |
+| `pytest` / `pytest-cov` | Testes e Cobertura | Padrão da comunidade; `--cov` mandatório para segurar regressões. |
 | `ruff` | Lint + format | Substitui flake8 + black + isort; mais rápido, configuração unificada |
 | `mypy` | Type checking | `--strict` é guardrail (ver Guardrails) |
+| `pre-commit` | Git Hooks | Garante que o código passe no lint (`ruff`) e na tipagem (`mypy`) antes de commitar. |
 
 ### Componentes externos (pré-existentes, parte do pipeline)
 
@@ -58,12 +61,13 @@ sync-notes-obsidian/
 ├── pyproject.toml
 ├── uv.lock                              ← COMMITADO
 ├── .gitignore
+├── .pre-commit-config.yaml              ← guardrail local para ruff/mypy
 ├── .github/
 │   └── workflows/                       ← Claude Code workflows (PR Assistant + Review)
 ├── src/
 │   └── synctotes/
 │       ├── __init__.py
-│       ├── cli.py                       ← entry point (Click ou Typer)
+│       ├── cli.py                       ← entry point via Typer
 │       ├── kindle.py                    ← parser My Clippings + conversor loc→page
 │       ├── boox.py                      ← ingest de export KOReader
 │       ├── obsidian.py                  ← writer de callouts no vault
@@ -84,7 +88,8 @@ sync-notes-obsidian/
 
 - **Lint + format:** `ruff` (regras: estilo PEP-8 + isort + bugbear + comprehensions; line length 100)
 - **Type checking:** `mypy --strict` em `src/`. Anotações de tipo obrigatórias em todas as funções públicas.
-- **Naming:** `snake_case` para funções/variáveis, `PascalCase` para classes, `SCREAMING_SNAKE_CASE` para constantes (Python idiomático)
+- **Git Hooks:** `pre-commit` instalado localmente executa ruff e mypy antes de cada commit.
+- **Nomenclatura:** `snake_case` para funções/variáveis, `PascalCase` para classes, `SCREAMING_SNAKE_CASE` para constantes (Python idiomático)
 - **Branches:** trunk-based, PRs curtos
 - **Commits:**
   - Marcos longitudinais (fim de feature, fechamento de sessão MDCU, mudança em `ARCHITECTURE.md`) → skill `commit-soap` (formato A+P)
@@ -97,8 +102,9 @@ sync-notes-obsidian/
 | Alias | Comando real |
 |---|---|
 | `install` | `uv sync` |
+| `setup-hooks` | `uv run pre-commit install` |
 | `dev` | `uv run synctotes --help` |
-| `test` | `uv run pytest` |
+| `test` | `uv run pytest --cov=synctotes` |
 | `lint` | `uv run ruff check` |
 | `format` | `uv run ruff format` |
 | `typecheck` | `uv run mypy src/` |
@@ -108,42 +114,21 @@ Estes são contrato. Em F6 do MDCU, o agente usa estes — não inventa variante
 
 ## Guardrails (invariantes — não mudar sem `/project-init --refresh`)
 
-1. **Interface tipada do conversor `loc→page`.** A função pública retorna `MatchResult` (status: `found` | `ambiguous` | `no_match`; mais `page`, `confidence`, `candidates`) **desde a primeira linha de código**. Refatorar essa interface depois é débito caro porque toca todos os call sites. Esta interface é o ponto de extensão para LLM-fallback via decorator pattern (ver ADR-002).
-
-2. **PDF é formato canônico no vault.** Links de callouts SEMPRE apontam para PDF (`[[livro.pdf#page=X]]`), nunca para EPUB. Se o usuário não tem PDF de um livro, a anotação fica como callout de texto simples com referência textual (sem link clicável), com warning no log.
-
-3. **EPUB é variante de transporte, fora do vault.** EPUB existe para o Kindle/Boox lerem confortavelmente. Não vai para o vault. Não tem callout apontando para `.epub#loc=X` (location não é estável entre leitores).
-
-4. **Lock file (`uv.lock`) sempre commitado.** Nunca em `.gitignore`. Toda alteração de dependência é commit de duas partes (manifesto + lock).
-
-5. **Sem LLM no MVP.** LLM-fallback é decisão deliberada para v2, ativada só quando dor real for medida (frequência de status `ambiguous` ou `no_match` for incômoda no uso real). Adicionar antes é over-engineering. Ver ADR-002.
-
-6. **Idempotência das anotações no vault.** Re-rodar o pipeline sobre o mesmo `My Clippings.txt` (ou export do Boox) **não duplica callouts**. Identidade do highlight = hash estável de (livro, snippet normalizado). Re-execução é segura.
-
-7. **Sem modificação de PDFs originais.** O projeto NÃO escreve no PDF — segue o modelo Zotero/`obsidian-pdf-plus`: anotações vivem no vault, PDF fica intocado. (Mesmo se quisermos no futuro, viola o modelo declarado em F4.)
-
-8. **Sem dependência de serviços de rede em runtime.** Nada de chamadas a APIs externas no pipeline. Tudo local. (Apenas o instalador de dependências usa rede.)
-
-## Escopo
-
-### Faz
-
-- Pipeline Python que ingere highlights de Kindle (`My Clippings.txt`) e exports de KOReader/Boox.
-- Conversor determinístico `loc EPUB → page PDF` via fuzzy text-search.
-- Geração de callouts Obsidian no vault, com link de página para o PDF canônico.
-- CLI manual (`synctotes ingest ...`).
-- Idempotência via hash de highlight.
-
-### NÃO faz
-
-- Leitor de ebook próprio.
-- Modificação de PDF original.
-- Jailbreak de Kindle ou qualquer modificação de firmware.
-- Sync de progresso de leitura entre devices (Whispersync nativo da Amazon já cobre para livros Amazon; não é problema deste projeto).
-- Cobertura de livros DRM Amazon que não foram convertidos para PDF.
-- Plugin Obsidian custom (decisão F5: deixado como ponto de extensão para v2).
-- Daemon/watcher automático (decisão F5: manual no MVP).
-- LLM-fallback no MVP (decisão F5: ponto de extensão preservado, não implementado).
+1. **Interface tipada do conversor `loc→page`.** A função pública retorna `MatchResult` (status: `found` | `ambiguous` | `no_match`; mais `page`, `confidence`, `candidates`) **desde a primeira linha de código**. 
+2. **PDF é formato canônico no vault.** Links de callouts SEMPRE apontam para PDF (`[[livro.pdf#page=X]]`), nunca para EPUB.
+3. **EPUB é variante de transporte, fora do vault.** EPUB existe para o Kindle/Boox lerem confortavelmente.
+4. **Lock file (`uv.lock`) sempre commitado.** Nunca em `.gitignore`.
+5. **Sem LLM no MVP.** LLM-fallback é decisão deliberada para v2.
+6. **Idempotência das anotações no vault.** Re-rodar o pipeline sobre o mesmo `My Clippings.txt` (ou export do Boox) **não duplica callouts**. Identidade do highlight = hash estável de (livro, snippet normalizado).
+7. **Sem modificação de PDFs originais.** O projeto NÃO escreve no PDF — anotações vivem no vault, PDF fica intocado.
+8. **Sem dependência de serviços de rede em runtime.** Tudo local. (Apenas o instalador de dependências usa rede.)
+9. **Interface CLI Fortemente Tipada (Typer).** O uso do `Typer` é mandatório. Não se deve usar `sys.argv` puro ou `argparse`.
+10. **Tratamento Visual (Rich).** Erros e logs para o usuário devem passar pelo `rich`, garantindo clareza terminal.
+11. **Barreira de Qualidade Local.** Nenhuma branch pode ser commitada contendo violações de `ruff` ou `mypy` (garantido pelo `pre-commit`).
+12. **Política "Append-Only" no Vault.** O script tem permissão apenas para adicionar callouts ou criar novos arquivos, NUNCA para deletar (`os.remove`) um arquivo `.md` do vault.
+13. **Degradação Graciosa no Ingest.** Se o script encontrar anotações malformadas, registra o erro via `rich`, pula o item e continua processando os restantes (não há "crash" global).
+14. **Modo `--dry-run` Mandatório na CLI.** Todas as funções que alteram o vault devem responder a uma flag `--dry-run`.
+15. **Codificação Estritamente UTF-8.** Todas as operações de leitura/escrita em disco devem declarar explicitamente `encoding="utf-8"`.
 
 ## ADRs relacionados
 
@@ -153,7 +138,9 @@ A serem criados em `docs/adr/` após `project-setup` materializar a estrutura:
 - **ADR-002** — Conversor determinístico-first com `MatchResult` tipado; LLM-fallback como ponto de extensão (decorator pattern)
 - **ADR-003** — Syncthing para biblioteca; Obsidian Sync para vault
 - **ADR-004** — PDF como formato canônico do vault; EPUB como variante de transporte
+- **ADR-005** — Adoção de Typer e Pre-commit para confiabilidade local e tipagem na borda CLI
 
 ## Histórico
 
 - **2026-04-29:** Sessão MDCU inaugural. Demanda aparente "jailbreak-kindle" reenquadrada cinco vezes até cristalizar a demanda real. F2–F5 do MDCU produziram este contrato sem nenhuma linha de código escrita. Próximo passo: `/project-setup` materializa stack.
+- **2026-05-03:** Refresh do contrato arquitetural. Adoção de `Typer` para CLI rigorosa, `rich` para logs visuais em caso de erros no My Clippings, exigência de cobertura `pytest-cov`, barreira de qualidade `pre-commit`, e consolidação de guardrails de resiliência e segurança do Vault (append-only, utf-8, dry-run).

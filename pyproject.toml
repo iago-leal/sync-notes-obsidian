@@ -18,6 +18,8 @@ dependencies = [
     "pdfplumber>=0.11",
     "rapidfuzz>=3.6",
     "ebooklib>=0.18",
+    "typer>=0.25.1",
+    "rich>=15.0.0",
 ]
 
 [project.scripts]
@@ -41,6 +43,8 @@ dev = [
     "mypy>=1.10",
     "pip-audit>=2.7",
     "fpdf2>=2.7",
+    "pre-commit>=4.6.0",
+    "pytest-cov>=7.1.0",
 ]
 
 [tool.ruff]
