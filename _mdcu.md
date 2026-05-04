@@ -7,36 +7,33 @@
 ---
 
 ## F1. Preparação
-- Gatilho Dual: OK (`ARCHITECTURE.md` presente e atualizado; setup materializado via `uv` e `pre-commit`).
-- Prontuário (`rsop/`): Inexistente (primeira sessão estrutural após o setup).
-- Rastreio F1 (Segurança): Sem anomalias detetadas.
+- Gatilho Dual: OK (`ARCHITECTURE.md` e repositório materializado).
+- Prontuário (`rsop/`): Lido. Nenhuma anomalia, nenhum problema aberto na `lista_problemas.md`.
+- Rastreio F1 (Segurança): Sem incidentes aparentes ao iniciar a sessão.
 
 ## F2. Escuta
 *Separação ativa entre Demanda (problema) e Queixa (sintomas/relato).*
-- **Queixa:** O usuário está colocando o MDCU no projeto e sente que precisa integrá-lo bem ao repositório já existente.
-- **Demanda:** Formalizar e materializar a fundação do MDCU (especificamente o componente de prontuário RSOP e as regras de versionamento) para que as futuras sessões de desenvolvimento funcionem perfeitamente.
+- **Queixa:** O usuário atualizou o repositório global do MDCU e precisa que as novas mudanças estruturais (matriz de rastreabilidade) sejam aplicadas no projeto.
+- **Demanda:** Instituir o Motor de Rastreabilidade Semântica (matrizes de *blast radius* e *code-spec*) para o projeto `sync-notes-obsidian`, garantindo que pequenas mudanças não causem degradação sistêmica na arquitetura.
 
 ## F3. Exploração
 *Ramificações sistêmicas da demanda.*
-- As skills foram fisicamente copiadas para `.agents/skills` e `.claude/skills`.
-- A arquitetura está documentada em `ARCHITECTURE.md`.
-- O diretório `rsop/` ainda não existe. Sem ele, a F1 das próximas sessões e o fechamento (F6, `/mdcu fechar` -> `/rsop soap`) vão falhar.
-- O arquivo `_mdcu.md` é o lousa efêmera do framework e não deve ir para o histórico do Git, mas atualmente ele não está no `.gitignore`.
+- A atualização do framework MDCU introduz a exigência de uma pasta `traceability/` contendo matrizes que funcionam como "Gate Disjuntor" para LLMs e agentes.
+- Atualmente, o `sync-notes-obsidian` não possui essa matriz. Precisamos mapear nossos componentes vitais (`kindle.py`, `pdf.py`, `obsidian.py`) contra as especificações e regras de domínio (`ARCHITECTURE.md`, `ADR-002`, `ADR-004`).
+- Qualquer futura alteração no projeto precisará consultar essa matriz para evitar *blast radius* não antecipado (por exemplo, alterar o conversor fuzzy pode quebrar a idempotência no Vault).
 
 ## F4. Avaliação
 *Formulação da hipótese estrutural.*
-- #1 Inicialização Estrutural do RSOP (`rsop/dados_base.md`, `rsop/lista_problemas.md`, `rsop/passivos.md`, `rsop/soap/`).
-- #2 Inserção de dados preliminares no `dados_base.md` extraídos da documentação atual.
-- #3 Proteção do repositório adicionando `_mdcu.md` ao `.gitignore`.
+- #4 Instituir `traceability/code-spec-matrix.md` para o código-fonte atual.
+- #5 Instituir `traceability/spec-impact-matrix.md` definindo os impactos cruzados (blast radius) de alterações na CLI, no conversor fuzzy e nos callouts.
+- #6 Adicionar a **ADR-006** oficializando a adoção do motor de rastreabilidade.
 
 ## F5. Plano
 *Alternativas viáveis com trade-offs.*
-- **Alternativa A (Integração Total Inteligente):** Executamos a inicialização das pastas do RSOP, adicionamos o `_mdcu.md` no `.gitignore` e já preenchemos o `rsop/dados_base.md` com as informações que sabemos (nome do projeto, propósito e autor extraídos do `ARCHITECTURE.md`).
-- **Alternativa B (Integração Vanilla):** Rodamos apenas o comando bruto `/rsop init` para gerar as pastas vazias e atualizamos o `.gitignore`, deixando o preenchimento manual do `dados_base.md` para você fazer depois via `/rsop dados`.
+- **Plano de Execução Direta:** 
+  Como essa é uma exigência metodológica inegociável da nova versão do framework MDCU, aplicarei a criação da pasta `traceability/` com as duas matrizes devidamente adaptadas ao domínio do seu conversor Kindle-Obsidian, criarei a ADR-006 e registrarei a adoção no nosso prontuário RSOP.
 
 ## F6. Execução e Fechamento
 *Acompanhamento da execução delegada e integração.*
-- **Decisão:** Alternativa A escolhida pelo usuário.
-- **Delegação (F6.a):** Atuando como engine ad-hoc, criei a estrutura física do RSOP e o adicionei ao controle.
-- **Gate de Integração (F6.c):** Testes executados (`uv run python -m pytest`) e 29 testes passaram.
-- **Fechamento Próximo:** Aguardando comando de fechamento do usuário.
+- **Decisão:** Plano de Execução Direta aprovado.
+- **Delegação:** Atuando como engine ad-hoc para criar a matriz de rastreabilidade, ADR-006 e atualizar o RSOP.
