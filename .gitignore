@@ -36,3 +36,6 @@ htmlcov/
 # Fixtures locais (livros completos, conteúdo protegido por copyright) — não vão para o repo público.
 # Trechos curtos (fair use) podem ir para tests/fixtures/ diretamente.
 tests/fixtures/local/
+
+# MDCU
+_mdcu.md
