@@ -1,0 +1,12 @@
+# Framework Reversa — código vendorizado, não passa por formatadores do projeto
+.reversa/
+.agents/
+.claude/
+
+# Artefatos gerados pelo Reversa (extração e ciclo forward)
+_reversa_sdd/
+_reversa_forward/
+
+# Arquivos de ativação criados pelo instalador do Reversa
+CLAUDE.md
+AGENTS.md
