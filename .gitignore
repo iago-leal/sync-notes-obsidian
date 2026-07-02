@@ -39,3 +39,4 @@ tests/fixtures/local/
 
 # MDCU
 _mdcu.md
+.harness/sync-cache.json
