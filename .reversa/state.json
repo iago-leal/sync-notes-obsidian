@@ -8,16 +8,98 @@
   "doc_level": "completo",
   "output_folder": "_reversa_sdd",
   "forward_folder": "_reversa_forward",
-  "phase": null,
-  "completed": [],
-  "pending": [
+  "phase": "revisao",
+  "completed": [
     "reconhecimento",
     "escavacao",
     "interpretacao",
     "geracao",
     "revisao"
   ],
-  "checkpoints": {},
+  "pending": [],
+  "redator_progress": {
+    "units_done": ["kindle", "amazon_export", "pdf", "types", "cli", "obsidian", "boox"],
+    "units_pending": [],
+    "globals_pending": []
+  },
+  "checkpoints": {
+    "reviewer": {
+      "completed_at": "2026-07-02T13:40:00Z",
+      "cross_review": false,
+      "reclassifications": 2,
+      "questions": 22,
+      "files": [
+        "_reversa_sdd/questions.md",
+        "_reversa_sdd/gaps.md",
+        "_reversa_sdd/confidence-report.md"
+      ]
+    },
+    "writer": {
+      "completed_at": "2026-07-02T13:25:00Z",
+      "units": 7,
+      "files": [
+        "_reversa_sdd/kindle/{requirements,design,tasks,questions}.md",
+        "_reversa_sdd/amazon_export/{requirements,design,tasks,questions}.md",
+        "_reversa_sdd/pdf/{requirements,design,tasks}.md",
+        "_reversa_sdd/types/{requirements,design,tasks}.md",
+        "_reversa_sdd/cli/{requirements,design,tasks,questions}.md",
+        "_reversa_sdd/obsidian/{requirements,design,tasks,questions}.md",
+        "_reversa_sdd/boox/{requirements,design,tasks,questions}.md",
+        "_reversa_sdd/user-stories/sincronizar-anotacoes.md",
+        "_reversa_sdd/traceability/code-spec-matrix.md"
+      ]
+    },
+    "architect": {
+      "completed_at": "2026-07-02T13:05:00Z",
+      "files": [
+        "_reversa_sdd/architecture.md",
+        "_reversa_sdd/c4-context.md",
+        "_reversa_sdd/c4-containers.md",
+        "_reversa_sdd/c4-components.md",
+        "_reversa_sdd/erd-complete.md",
+        "_reversa_sdd/traceability/spec-impact-matrix.md"
+      ]
+    },
+    "detective": {
+      "completed_at": "2026-07-02T12:55:00Z",
+      "files": [
+        "_reversa_sdd/domain.md",
+        "_reversa_sdd/state-machines.md",
+        "_reversa_sdd/permissions.md",
+        "_reversa_sdd/adrs/000-indice.md",
+        "_reversa_sdd/adrs/007-amazon-export-segunda-fonte-ingest.md",
+        "_reversa_sdd/adrs/008-contrato-antes-do-codigo.md"
+      ]
+    },
+    "archaeologist": {
+      "completed_at": "2026-07-02T12:40:00Z",
+      "modules_analyzed": ["kindle", "amazon_export", "pdf", "types", "cli", "obsidian", "boox"],
+      "modules_pending": [],
+      "files": [
+        "_reversa_sdd/code-analysis.md",
+        "_reversa_sdd/data-dictionary.md",
+        "_reversa_sdd/flowcharts/kindle.md",
+        "_reversa_sdd/flowcharts/amazon_export.md",
+        "_reversa_sdd/flowcharts/pdf.md",
+        ".reversa/context/modules.json",
+        "_reversa_sdd/kindle/legacy-mapping.md",
+        "_reversa_sdd/amazon_export/legacy-mapping.md",
+        "_reversa_sdd/pdf/legacy-mapping.md",
+        "_reversa_sdd/types/legacy-mapping.md",
+        "_reversa_sdd/cli/legacy-mapping.md",
+        "_reversa_sdd/obsidian/legacy-mapping.md",
+        "_reversa_sdd/boox/legacy-mapping.md"
+      ]
+    },
+    "scout": {
+      "completed_at": "2026-07-02T12:25:33Z",
+      "files": [
+        "_reversa_sdd/inventory.md",
+        "_reversa_sdd/dependencies.md",
+        ".reversa/context/surface.json"
+      ]
+    }
+  },
   "engines": [
     "claude-code",
     "antigravity"

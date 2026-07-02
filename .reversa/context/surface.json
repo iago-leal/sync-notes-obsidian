@@ -1,0 +1,62 @@
+{
+  "generated_at": "2026-07-02T00:00:00Z",
+  "project_root": "/Users/iagoleal/dev/jailbreak-kindle",
+  "languages": [
+    { "name": "Python", "extensions": [".py"], "file_count": 13 },
+    { "name": "Markdown", "extensions": [".md"], "file_count": 20 },
+    { "name": "YAML", "extensions": [".yml", ".yaml"], "file_count": 3 },
+    { "name": "TOML", "extensions": [".toml"], "file_count": 1 }
+  ],
+  "primary_language": "Python",
+  "frameworks": [
+    { "name": "Typer", "version": "0.25.1", "source": "pyproject.toml" },
+    { "name": "pdfplumber", "version": "0.11.9", "source": "uv.lock" },
+    { "name": "rapidfuzz", "version": "3.14.5", "source": "uv.lock" },
+    { "name": "ebooklib", "version": "0.20", "source": "uv.lock" },
+    { "name": "rich", "version": "15.0.0", "source": "uv.lock" },
+    { "name": "pytest", "version": "9.0.3", "source": "uv.lock" }
+  ],
+  "package_manager": "uv",
+  "entry_points": [
+    { "path": "src/synctotes/cli.py", "type": "cli_entry" }
+  ],
+  "config_files": [
+    "pyproject.toml",
+    ".pre-commit-config.yaml",
+    ".prettierignore"
+  ],
+  "ci_cd": [
+    ".github/workflows/claude.yml",
+    ".github/workflows/claude-code-review.yml"
+  ],
+  "database_hints": [],
+  "test_framework": "pytest",
+  "test_file_count": 4,
+  "modules": [
+    "kindle",
+    "amazon_export",
+    "pdf",
+    "types",
+    "cli",
+    "obsidian",
+    "boox"
+  ],
+  "total_files": 47,
+  "organization_suggestion": {
+    "granularity": "module",
+    "rationale": "O pacote synctotes é organizado por módulo de domínio — um arquivo por fonte de anotações (kindle, amazon_export, boox), extração (pdf), destino (obsidian) e contratos (types).",
+    "signals": [
+      {
+        "type": "top_level_domain_folders",
+        "evidence": [
+          "src/synctotes/kindle.py",
+          "src/synctotes/amazon_export.py",
+          "src/synctotes/boox.py",
+          "src/synctotes/obsidian.py",
+          "src/synctotes/pdf.py"
+        ]
+      }
+    ],
+    "features": []
+  }
+}

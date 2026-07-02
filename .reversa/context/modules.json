@@ -1,0 +1,329 @@
+{
+  "generated_at": "2026-07-02T12:40:00Z",
+  "modules": [
+    {
+      "name": "kindle",
+      "path": "src/synctotes/kindle.py",
+      "purpose": "Parser do My Clippings.txt do Kindle (locales PT-BR e EN); futuro lar do resolver loc->page (ADR-002)",
+      "primary_files": ["src/synctotes/kindle.py"],
+      "functions": [
+        {
+          "name": "parse_clippings",
+          "file": "src/synctotes/kindle.py",
+          "params": ["content: str"],
+          "returns": "list[KindleClipping]",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "_parse_block",
+          "file": "src/synctotes/kindle.py",
+          "params": ["block: str"],
+          "returns": "KindleClipping | None",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "_parse_metadata_line",
+          "file": "src/synctotes/kindle.py",
+          "params": ["line: str"],
+          "returns": "tuple[ClippingType, int|None, int|None, int|None, datetime|None] | None",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "_parse_position",
+          "file": "src/synctotes/kindle.py",
+          "params": ["part: str"],
+          "returns": "tuple[int|None, int|None, int|None]",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "_parse_date",
+          "file": "src/synctotes/kindle.py",
+          "params": ["part: str"],
+          "returns": "datetime | None",
+          "confidence": "confirmed"
+        }
+      ],
+      "entities": [
+        {
+          "name": "ClippingType",
+          "fields": [
+            { "name": "HIGHLIGHT", "type": "str = 'highlight'", "required": true },
+            { "name": "NOTE", "type": "str = 'note'", "required": true },
+            { "name": "BOOKMARK", "type": "str = 'bookmark'", "required": true }
+          ],
+          "confidence": "confirmed"
+        },
+        {
+          "name": "KindleBook",
+          "fields": [
+            { "name": "title", "type": "str", "required": true },
+            { "name": "author", "type": "str | None", "required": false }
+          ],
+          "confidence": "confirmed"
+        },
+        {
+          "name": "KindleClipping",
+          "fields": [
+            { "name": "book", "type": "KindleBook", "required": true },
+            { "name": "kind", "type": "ClippingType", "required": true },
+            { "name": "location_start", "type": "int | None", "required": false },
+            { "name": "location_end", "type": "int | None", "required": false },
+            { "name": "page", "type": "int | None", "required": false },
+            { "name": "added_at", "type": "datetime | None", "required": false },
+            { "name": "text", "type": "str", "required": true }
+          ],
+          "confidence": "confirmed"
+        }
+      ],
+      "business_rules": [
+        {
+          "description": "Página tem precedência sobre posição na metadata do clipping",
+          "location": "src/synctotes/kindle.py:205-216",
+          "confidence": "confirmed"
+        },
+        {
+          "description": "Blocos malformados são descartados em silêncio; contagem comparativa fica a cargo do chamador",
+          "location": "src/synctotes/kindle.py:98-117",
+          "confidence": "confirmed"
+        },
+        {
+          "description": "Falha no parse de data é não-fatal (added_at = None)",
+          "location": "src/synctotes/kindle.py:219-257",
+          "confidence": "confirmed"
+        },
+        {
+          "description": "Bookmarks têm texto vazio",
+          "location": "tests/test_kindle.py:test_parse_clippings_bookmark_has_empty_text",
+          "confidence": "confirmed"
+        }
+      ],
+      "dependencies": [],
+      "algorithms": [
+        "Parser tolerante multi-locale (PT-BR/EN) com varredura independente das partes da metadata para cobrir formatos antigo e moderno do My Clippings"
+      ],
+      "complexity": "medium"
+    },
+    {
+      "name": "amazon_export",
+      "path": "src/synctotes/amazon_export.py",
+      "purpose": "Parser do PDF 'Caderno de anotações' exportado pela Amazon (locale PT-BR; EN pendente de fixture)",
+      "primary_files": ["src/synctotes/amazon_export.py"],
+      "functions": [
+        {
+          "name": "parse_export_pdf",
+          "file": "src/synctotes/amazon_export.py",
+          "params": ["path: Path | str"],
+          "returns": "ExportedNotebook",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "_parse_header",
+          "file": "src/synctotes/amazon_export.py",
+          "params": ["lines: list[str]"],
+          "returns": "tuple[AmazonBook, int, int]",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "_parse_annotations",
+          "file": "src/synctotes/amazon_export.py",
+          "params": ["lines: list[str]"],
+          "returns": "list[AmazonAnnotation]",
+          "confidence": "confirmed"
+        }
+      ],
+      "entities": [
+        {
+          "name": "AmazonBook",
+          "fields": [
+            { "name": "title", "type": "str", "required": true },
+            { "name": "author", "type": "str | None", "required": false },
+            { "name": "asin", "type": "str | None", "required": false }
+          ],
+          "confidence": "confirmed"
+        },
+        {
+          "name": "AmazonAnnotation",
+          "fields": [
+            { "name": "kind", "type": "ClippingType", "required": true },
+            { "name": "color", "type": "str | None", "required": false },
+            { "name": "coordinate_kind", "type": "Literal['page','position']", "required": true },
+            { "name": "coordinate_value", "type": "int (> 0)", "required": true },
+            { "name": "is_continuation", "type": "bool", "required": true },
+            { "name": "text", "type": "str", "required": true },
+            { "name": "note", "type": "str | None", "required": false },
+            { "name": "date_added", "type": "date | None", "required": false }
+          ],
+          "confidence": "confirmed"
+        },
+        {
+          "name": "ExportedNotebook",
+          "fields": [
+            { "name": "book", "type": "AmazonBook", "required": true },
+            { "name": "annotations", "type": "tuple[AmazonAnnotation, ...]", "required": true },
+            { "name": "summary_total", "type": "int", "required": true }
+          ],
+          "confidence": "confirmed"
+        }
+      ],
+      "business_rules": [
+        {
+          "description": "Coordenadas em dois sistemas (page/position) conforme a edição comercial; resolver despacha pelo coordinate_kind",
+          "location": "src/synctotes/amazon_export.py:29,245-248",
+          "confidence": "confirmed"
+        },
+        {
+          "description": "Reconciliação com sumário Amazon: itens sem continuação + notas anexadas == summary_total (semântica invertida em relação à contagem da Amazon)",
+          "location": "tests/test_amazon_export.py:test_total_annotations_match_summary",
+          "confidence": "confirmed"
+        },
+        {
+          "description": "Continuação de destaque vira item próprio (is_continuation=True); nota anexada dobra no campo note do destaque",
+          "location": "src/synctotes/amazon_export.py:230-243,261-265",
+          "confidence": "confirmed"
+        },
+        {
+          "description": "Data dentro de bloco de nota não sobrescreve a data do destaque",
+          "location": "src/synctotes/amazon_export.py:267-275",
+          "confidence": "confirmed"
+        },
+        {
+          "description": "Linhas só-dígitos e numerais romanos são ruído estrutural do PDF, descartadas",
+          "location": "src/synctotes/amazon_export.py:215-218",
+          "confidence": "confirmed"
+        }
+      ],
+      "dependencies": ["kindle", "pdf (via pdfplumber direto)"],
+      "algorithms": [
+        "Máquina de estados linha a linha com acumulador e flush() para segmentar anotações do texto corrido do PDF"
+      ],
+      "complexity": "medium"
+    },
+    {
+      "name": "pdf",
+      "path": "src/synctotes/pdf.py",
+      "purpose": "Extração de texto por página do PDF canônico (base do fuzzy search do resolver)",
+      "primary_files": ["src/synctotes/pdf.py"],
+      "functions": [
+        {
+          "name": "extract_pages",
+          "file": "src/synctotes/pdf.py",
+          "params": ["path: Path | str"],
+          "returns": "dict[int, str]",
+          "confidence": "confirmed"
+        }
+      ],
+      "entities": [],
+      "business_rules": [
+        {
+          "description": "Mapeamento denso 1-indexado; página vazia = string vazia; convenção do link [[livro.pdf#page=X]]",
+          "location": "src/synctotes/pdf.py:15-27",
+          "confidence": "confirmed"
+        }
+      ],
+      "dependencies": [],
+      "algorithms": [],
+      "complexity": "low"
+    },
+    {
+      "name": "types",
+      "path": "src/synctotes/types.py",
+      "purpose": "Contrato público do resolver loc->page (guardrail #1, ADR-002); estabelecido antes da implementação",
+      "primary_files": ["src/synctotes/types.py"],
+      "functions": [],
+      "entities": [
+        {
+          "name": "Candidate",
+          "fields": [
+            { "name": "page", "type": "int", "required": true },
+            { "name": "score", "type": "float", "required": true },
+            { "name": "excerpt", "type": "str", "required": true }
+          ],
+          "confidence": "confirmed"
+        },
+        {
+          "name": "MatchResult",
+          "fields": [
+            { "name": "status", "type": "Literal['found','ambiguous','no_match']", "required": true },
+            { "name": "page", "type": "int | None", "required": false },
+            { "name": "confidence", "type": "float | None", "required": false },
+            { "name": "candidates", "type": "tuple[Candidate, ...]", "required": false }
+          ],
+          "confidence": "confirmed"
+        }
+      ],
+      "business_rules": [
+        {
+          "description": "Semântica por status: found -> page+confidence; ambiguous -> candidates; no_match -> vazio",
+          "location": "src/synctotes/types.py:29-41",
+          "confidence": "confirmed"
+        },
+        {
+          "description": "Fallback LLM em v2 via decorator sobre a mesma interface",
+          "location": "src/synctotes/types.py:6-8 (docstring, ADR-002)",
+          "confidence": "confirmed"
+        }
+      ],
+      "dependencies": [],
+      "algorithms": [],
+      "complexity": "low"
+    },
+    {
+      "name": "cli",
+      "path": "src/synctotes/cli.py",
+      "purpose": "Entry point da CLI (console script 'synctotes'); stub verificado end-to-end, comandos reais em F6",
+      "primary_files": ["src/synctotes/cli.py"],
+      "functions": [
+        {
+          "name": "main",
+          "file": "src/synctotes/cli.py",
+          "params": [],
+          "returns": "int",
+          "confidence": "confirmed"
+        }
+      ],
+      "entities": [],
+      "business_rules": [],
+      "dependencies": [],
+      "algorithms": [],
+      "complexity": "low",
+      "status": "stub"
+    },
+    {
+      "name": "obsidian",
+      "path": "src/synctotes/obsidian.py",
+      "purpose": "Writer de callouts no vault; link sempre ao PDF canônico [[livro.pdf#page=X]] (guardrail #2); idempotência por hash de (livro, snippet normalizado) (guardrail #6); implementação F6.a",
+      "primary_files": ["src/synctotes/obsidian.py"],
+      "functions": [],
+      "entities": [],
+      "business_rules": [
+        {
+          "description": "Callout sempre linka o PDF canônico, nunca o EPUB",
+          "location": "src/synctotes/obsidian.py:1-7 (docstring, guardrail #2)",
+          "confidence": "confirmed"
+        },
+        {
+          "description": "Idempotência por hash estável de (livro, snippet normalizado)",
+          "location": "src/synctotes/obsidian.py:1-7 (docstring, guardrail #6)",
+          "confidence": "confirmed"
+        }
+      ],
+      "dependencies": [],
+      "algorithms": [],
+      "complexity": "low",
+      "status": "stub"
+    },
+    {
+      "name": "boox",
+      "path": "src/synctotes/boox.py",
+      "purpose": "Ingest de exports markdown do KOReader/Boox; implementação F6.a",
+      "primary_files": ["src/synctotes/boox.py"],
+      "functions": [],
+      "entities": [],
+      "business_rules": [],
+      "dependencies": [],
+      "algorithms": [],
+      "complexity": "low",
+      "status": "stub"
+    }
+  ]
+}

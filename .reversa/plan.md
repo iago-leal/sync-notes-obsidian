@@ -8,9 +8,9 @@
 
 ## Fase 1: Reconhecimento 🔍
 
-- [ ] **Scout** — Mapeamento de estrutura de pastas e tecnologias
-- [ ] **Scout** — Análise de dependências e gerenciadores de pacotes
-- [ ] **Scout** — Identificação de entry points, CI/CD e configurações
+- [x] **Scout** — Mapeamento de estrutura de pastas e tecnologias ✅
+- [x] **Scout** — Análise de dependências e gerenciadores de pacotes ✅
+- [x] **Scout** — Identificação de entry points, CI/CD e configurações ✅
 
 ## Decisão de organização das specs 🗂️
 
@@ -20,29 +20,33 @@
 
 > O Reversa preenche esta seção com os módulos reais após o Scout concluir o reconhecimento.
 
-- [ ] **Arqueólogo** — Análise dos módulos identificados pelo Scout
+- [x] **Archaeologist** — Análise do módulo `kindle` (parser My Clippings) ✅
+- [x] **Archaeologist** — Análise do módulo `amazon_export` (parser PDF Amazon) ✅
+- [x] **Archaeologist** — Análise do módulo `pdf` (extração paginada) ✅
+- [x] **Archaeologist** — Análise do módulo `types` (contratos MatchResult/Candidate) ✅
+- [x] **Archaeologist** — Análise dos stubs `cli`, `obsidian`, `boox` (contratos declarados, implementação F6.a) ✅
 
 ## Fase 3: Interpretação 🧠
 
-- [ ] **Detetive** — Arqueologia Git e ADRs retroativos
-- [ ] **Detetive** — Regras de negócio implícitas e máquinas de estado
-- [ ] **Detetive** — Matriz de permissões (RBAC/ACL)
-- [ ] **Arquiteto** — Diagramas C4 (Contexto, Containers, Componentes)
-- [ ] **Arquiteto** — ERD completo e integrações externas
-- [ ] **Arquiteto** — Spec Impact Matrix
+- [x] **Detetive** — Arqueologia Git e ADRs retroativos ✅
+- [x] **Detetive** — Regras de negócio implícitas e máquinas de estado ✅
+- [x] **Detetive** — Matriz de permissões (RBAC/ACL) ✅
+- [x] **Arquiteto** — Diagramas C4 (Contexto, Containers, Componentes) ✅
+- [x] **Arquiteto** — ERD completo e integrações externas ✅
+- [x] **Arquiteto** — Spec Impact Matrix ✅
 
 ## Fase 4: Geração 📝
 
-- [ ] **Redator** — Specs SDD por componente
-- [ ] **Redator** — OpenAPI (se aplicável)
-- [ ] **Redator** — User Stories (se aplicável)
-- [ ] **Redator** — Code/Spec Matrix
+- [x] **Redator** — Specs SDD por componente ✅ (7 units, 25 arquivos)
+- [x] **Redator** — OpenAPI (não se aplica: sem API HTTP) ✅
+- [x] **Redator** — User Stories ✅ (`user-stories/sincronizar-anotacoes.md`)
+- [x] **Redator** — Code/Spec Matrix ✅
 
 ## Fase 5: Revisão ✅
 
-- [ ] **Revisor** — Revisão cruzada de specs
-- [ ] **Revisor** — Resolução de lacunas com o usuário
-- [ ] **Revisor** — Relatório de confiança final
+- [x] **Revisor** — Revisão cruzada de specs ✅ (verificação empírica: suíte 29/29, cobertura 91%)
+- [x] **Revisor** — Resolução de lacunas com o usuário ✅ (22 perguntas consolidadas em `questions.md`, aguardando respostas)
+- [x] **Revisor** — Relatório de confiança final ✅ (`confidence-report.md`: ≈70% 🟢)
 
 ---
 
