@@ -30,12 +30,14 @@ A decisão crítica em F4 do MDCU foi: **qual formato é canônico no vault?** A
 ## Consequências
 
 ### Positivas
+
 - Links no vault são estáveis ao longo do tempo (independem de mudança de fonte do leitor, etc.).
 - `obsidian-pdf-plus` integra naturalmente.
 - Renderização cross-device do callout é confiável.
 - PDF original preservado — pode ser substituído por nova versão do livro sem invalidar anotações antigas (com cuidado em re-mapping).
 
 ### Negativas
+
 - **Usuário precisa ter PDF de cada livro.** Se só tem EPUB:
   - **Caminho A:** converter EPUB → PDF via Calibre antes de adicionar à biblioteca. Layout pode ficar feio, mas é navegável.
   - **Caminho B:** anotações sem link clicável — vão como callout textual com referência "EPUB, location ~1432" sem âncora. Warning no log.
@@ -50,6 +52,7 @@ A decisão crítica em F4 do MDCU foi: **qual formato é canônico no vault?** A
 - **Markdown puro como canônico (sem PDF):** se fôssemos extrair texto do PDF e armazenar como markdown no vault. Perde estrutura visual (figuras, tabelas, equações), e o original deixa de ser referenciável. Rejeitado.
 
 ## Referências
+
 - `ARCHITECTURE.md` (Guardrail #2, Guardrail #3, Guardrail #7)
 - ADR-002 (conversor `loc→page` decorre dessa decisão)
-- `transcricao-mdcu-jailbreak-kindle.md` (turnos 7–8, onde a virada Zotero+dual-format foi cristalizada)
+- `docs/transcricao-mdcu-jailbreak-kindle.md` (turnos 7–8, onde a virada Zotero+dual-format foi cristalizada)

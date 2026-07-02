@@ -2,14 +2,14 @@
 
 - **Atualizado:** 2026-05-03
 - **Repositório:** https://github.com/iago-leal/sync-notes-obsidian
-- **Pasta local:** `~/Desktop/jailbreak-kindle/` (nome preservado como evidência narrativa do reenquadramento MDCU — ver README e transcrição)
+- **Pasta local:** `~/dev/jailbreak-kindle/` (nome preservado como evidência narrativa do reenquadramento MDCU — ver README e transcrição)
 
 ## Identificação
 
 - **Propósito:** Vault Obsidian é destino único de todas as anotações de livros, vindas de leitor nativo de cada device (macOS, iPad, Boox, Kindle Colorsoft). Cada livro tem versão PDF (canônica, com âncoras de página) e versão EPUB (para leitura confortável no Kindle/Boox-reflow). Anotações vindas do Kindle (em location de EPUB) passam por conversor `loc→page` antes de virarem callout no vault, para que o link de volta sempre aponte para o PDF canônico. Modelo análogo ao Zotero.
 - **Responsáveis:** Iago Leal (`iagobernardes13@gmail.com`)
 - **Stakeholders:** uso pessoal, único stakeholder
-- **Origem:** delimitação do problema via MDCU F2–F5 (ver `transcricao-mdcu-jailbreak-kindle.md`); cinco reenquadramentos sucessivos da demanda aparente "jailbreak Kindle" até cristalizar a demanda real.
+- **Origem:** delimitação do problema via MDCU F2–F5 (ver `docs/transcricao-mdcu-jailbreak-kindle.md`); cinco reenquadramentos sucessivos da demanda aparente "jailbreak Kindle" até cristalizar a demanda real.
 
 ## Stack
 
@@ -30,17 +30,17 @@
 
 ### Bibliotecas principais
 
-| Lib | Papel | Por quê |
-|---|---|---|
-| `pdfplumber` | Extração de texto + coordenadas de PDFs | Mais maduro do ecossistema Python para extrair texto preservando layout; expõe coords para futuras extensões |
-| `rapidfuzz` | Fuzzy text matching | Implementação rápida (Cython) de Levenshtein/ratio; usado no conversor `loc→page` |
-| `ebooklib` | Parsing de EPUB | Necessário para mapping inverso location→texto quando My Clippings traz só location, sem snippet |
-| `typer` | Framework CLI | Gera a CLI inteira a partir dos Type Hints nativos do `mypy`, eliminando boilerplate do `argparse`. |
-| `rich` | Terminal & Logging | Logs estruturados e legíveis no terminal em caso de erros no parse do Kindle. |
-| `pytest` / `pytest-cov` | Testes e Cobertura | Padrão da comunidade; `--cov` mandatório para segurar regressões. |
-| `ruff` | Lint + format | Substitui flake8 + black + isort; mais rápido, configuração unificada |
-| `mypy` | Type checking | `--strict` é guardrail (ver Guardrails) |
-| `pre-commit` | Git Hooks | Garante que o código passe no lint (`ruff`) e na tipagem (`mypy`) antes de commitar. |
+| Lib                     | Papel                                   | Por quê                                                                                                      |
+| ----------------------- | --------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `pdfplumber`            | Extração de texto + coordenadas de PDFs | Mais maduro do ecossistema Python para extrair texto preservando layout; expõe coords para futuras extensões |
+| `rapidfuzz`             | Fuzzy text matching                     | Implementação rápida (Cython) de Levenshtein/ratio; usado no conversor `loc→page`                            |
+| `ebooklib`              | Parsing de EPUB                         | Necessário para mapping inverso location→texto quando My Clippings traz só location, sem snippet             |
+| `typer`                 | Framework CLI                           | Gera a CLI inteira a partir dos Type Hints nativos do `mypy`, eliminando boilerplate do `argparse`.          |
+| `rich`                  | Terminal & Logging                      | Logs estruturados e legíveis no terminal em caso de erros no parse do Kindle.                                |
+| `pytest` / `pytest-cov` | Testes e Cobertura                      | Padrão da comunidade; `--cov` mandatório para segurar regressões.                                            |
+| `ruff`                  | Lint + format                           | Substitui flake8 + black + isort; mais rápido, configuração unificada                                        |
+| `mypy`                  | Type checking                           | `--strict` é guardrail (ver Guardrails)                                                                      |
+| `pre-commit`            | Git Hooks                               | Garante que o código passe no lint (`ruff`) e na tipagem (`mypy`) antes de commitar.                         |
 
 ### Componentes externos (pré-existentes, parte do pipeline)
 
@@ -99,22 +99,22 @@ sync-notes-obsidian/
 
 ## Comandos principais
 
-| Alias | Comando real |
-|---|---|
-| `install` | `uv sync` |
-| `setup-hooks` | `uv run pre-commit install` |
-| `dev` | `uv run synctotes --help` |
-| `test` | `uv run pytest --cov=synctotes` |
-| `lint` | `uv run ruff check` |
-| `format` | `uv run ruff format` |
-| `typecheck` | `uv run mypy src/` |
-| `audit` | `uv run pip-audit` |
+| Alias         | Comando real                    |
+| ------------- | ------------------------------- |
+| `install`     | `uv sync`                       |
+| `setup-hooks` | `uv run pre-commit install`     |
+| `dev`         | `uv run synctotes --help`       |
+| `test`        | `uv run pytest --cov=synctotes` |
+| `lint`        | `uv run ruff check`             |
+| `format`      | `uv run ruff format`            |
+| `typecheck`   | `uv run mypy src/`              |
+| `audit`       | `uv run pip-audit`              |
 
 Estes são contrato. Em F6 do MDCU, o agente usa estes — não inventa variantes (`pip install`, `python -m pytest`, etc.).
 
 ## Guardrails (invariantes — não mudar sem `/project-init --refresh`)
 
-1. **Interface tipada do conversor `loc→page`.** A função pública retorna `MatchResult` (status: `found` | `ambiguous` | `no_match`; mais `page`, `confidence`, `candidates`) **desde a primeira linha de código**. 
+1. **Interface tipada do conversor `loc→page`.** A função pública retorna `MatchResult` (status: `found` | `ambiguous` | `no_match`; mais `page`, `confidence`, `candidates`) **desde a primeira linha de código**.
 2. **PDF é formato canônico no vault.** Links de callouts SEMPRE apontam para PDF (`[[livro.pdf#page=X]]`), nunca para EPUB.
 3. **EPUB é variante de transporte, fora do vault.** EPUB existe para o Kindle/Boox lerem confortavelmente.
 4. **Lock file (`uv.lock`) sempre commitado.** Nunca em `.gitignore`.
