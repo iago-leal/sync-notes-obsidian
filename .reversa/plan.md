@@ -45,7 +45,7 @@
 ## Fase 5: Revisão ✅
 
 - [x] **Revisor** — Revisão cruzada de specs ✅ (verificação empírica: suíte 29/29, cobertura 91%)
-- [x] **Revisor** — Resolução de lacunas com o usuário ✅ (22 perguntas consolidadas em `questions.md`, aguardando respostas)
+- [x] **Revisor** — Resolução de lacunas com o usuário ✅ (22 perguntas respondidas em 2026-07-02, aprovação em bloco; decisões propagadas às units)
 - [x] **Revisor** — Relatório de confiança final ✅ (`confidence-report.md`: ≈70% 🟢)
 
 ---

@@ -23,6 +23,23 @@
     "globals_pending": []
   },
   "checkpoints": {
+    "questions_resolution": {
+      "completed_at": "2026-07-02T18:30:00Z",
+      "mode": "aprovacao_em_bloco",
+      "approved": 22,
+      "vetoed": 0,
+      "files": [
+        "_reversa_sdd/questions.md",
+        "_reversa_sdd/kindle/questions.md",
+        "_reversa_sdd/amazon_export/questions.md",
+        "_reversa_sdd/cli/questions.md",
+        "_reversa_sdd/obsidian/questions.md",
+        "_reversa_sdd/boox/questions.md",
+        "_reversa_sdd/gaps.md",
+        "_reversa_sdd/confidence-report.md"
+      ],
+      "remaining_blocker": "fixture real do markdown_export (KOReader) antes de codar boox.py"
+    },
     "reviewer": {
       "completed_at": "2026-07-02T13:40:00Z",
       "cross_review": false,

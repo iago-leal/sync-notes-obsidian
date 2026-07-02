@@ -1,11 +1,11 @@
-# Questions — unit `kindle` (validação humana pendente)
+# Questions — unit `kindle` (decididas)
 
-> Reversa Writer, 2026-07-02.
+> Reversa Writer, 2026-07-02 · Decisões aprovadas em bloco pelo mantenedor em 2026-07-02 e propagadas do `_reversa_sdd/questions.md` central (fonte autoritativa das respostas completas).
 
-| # | Pergunta | Contexto | Impacto |
+| # | Pergunta | Decisão | Ref |
 |---|---|---|---|
-| 1 | 🔴 Qual o limiar de score do rapidfuzz que separa `found` de `ambiguous`/`no_match`? | ADR-002 fixa o contrato, não o limiar | Núcleo do RF-09; define a taxa de callouts automáticos |
-| 2 | 🔴 Com snippet presente em múltiplas páginas (epígrafes, refrões), qual heurística de desempate — ordem, location relativa, contexto adjacente? | resolver futuro | Qualidade do `ambiguous` |
-| 3 | 🔴 O resolver deve viver em `kindle.py` (docstring atual) ou em módulo próprio `resolver.py` (sugestão do Architect em `c4-components.md`)? | organização | Coesão do módulo |
-| 4 | 🟡 Clippings de tipo `bookmark` (sem texto) devem gerar callout, ser ignorados, ou registrados noutro formato? | writer futuro | Escopo do pipeline |
-| 5 | 🟡 O que fazer com clippings cujo livro não tem PDF canônico na biblioteca? | operacional | Fila de pendências vs. descarte |
+| 1 | 🟢 DECIDIDO — Limiar de score do resolver | rapidfuzz `token_set_ratio` sobre o texto de cada página: `found` se ≥ 90 **e** vantagem ≥ 5 pontos sobre o 2º colocado; `ambiguous` se ≥ 75 sem essas condições; `no_match` se < 75. `confidence = score/100`. Limiares como constantes nomeadas, calibráveis pela fixture Quincas Borba | Q1 |
+| 2 | 🟢 DECIDIDO — Desempate multi-página | Prior de posição relativa: `location/max_location` estima `page/max_page`; vence o candidato com página mais próxima da estimativa, mantida a vantagem de 5 pontos; persistindo empate, `ambiguous` | Q2 |
+| 3 | 🟢 DECIDIDO — Localização do resolver | Módulo próprio `resolver.py` (`kindle.py` permanece parser puro; o resolver serve a todas as fontes). Registrar microdecisão; docstring de `kindle.py` atualizada em F6 | Q3 |
+| 4 | 🟢 DECIDIDO — Bookmarks | Não geram callout (sem texto, sem valor no vault); contados no log da execução | Q15 |
+| 5 | 🟢 DECIDIDO — Livro sem PDF canônico | Pular com aviso rich e listar no resumo final; nada é criado | Q16 |

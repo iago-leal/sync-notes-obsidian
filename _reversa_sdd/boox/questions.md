@@ -1,9 +1,9 @@
-# Questions — unit `boox`
+# Questions — unit `boox` (decididas)
 
-> Reversa Writer, 2026-07-02.
+> Reversa Writer, 2026-07-02 · Decisões aprovadas em bloco pelo mantenedor em 2026-07-02 e propagadas do `_reversa_sdd/questions.md` central (fonte autoritativa das respostas completas). Q13/Q14 deixam de bloquear o `boox.py`; resta obter fixture real do `markdown_export` antes de codar.
 
-| # | Pergunta | Impacto |
-|---|---|---|
-| 1 | 🔴 Qual plugin de export do KOReader será usado: `evernote_export` ou `markdown_export`? | Formato de entrada de todo o parser |
-| 2 | 🔴 As leituras no Boox serão majoritariamente em PDF (página nativa, sem resolver) ou EPUB reflow (precisa resolver)? | Escopo: o parser pode nem precisar do resolver |
-| 3 | 🟡 O export do KOReader chega por Syncthing automaticamente ou exige ação manual no device? | UX do pipeline |
+| # | Pergunta | Decisão | Ref |
+|---|---|---|---|
+| 1 | 🟢 DECIDIDO — Plugin de export do KOReader | `markdown_export` — saída já no idioma do vault, sem o envelope ENEX/XML do `evernote_export` | Q13 |
+| 2 | 🟢 DECIDIDO — PDF ou EPUB reflow | Suportar ambos desde o parser, registrando `coordinate_kind` como no amazon_export: PDF nativo (página direta) dispensa resolver; EPUB reflow passa por ele. A proporção real de uso não precisa ser decidida | Q14 |
+| 3 | 🟢 DECIDIDO — Transporte do export | Pasta de export do KOReader incluída no Syncthing da biblioteca; chega ao macOS sem ação manual | Q22 |
